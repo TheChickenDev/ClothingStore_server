@@ -16,13 +16,13 @@ const createUser = (data, imageFile) => {
       if (checkUserByEmail) {
         if (imageFile) cloudinary.uploader.destroy(imageFile.filename);
         resolve({
-          status: "OK",
+          status: "ERR",
           message: "Email đã tồn tại!",
         });
       } else if (checkUserByPhone) {
         if (imageFile) cloudinary.uploader.destroy(imageFile.filename);
         resolve({
-          status: "OK",
+          status: "ERR",
           message: "Số điện thoại đã tồn tại!",
         });
       } else {
@@ -45,10 +45,14 @@ const createUser = (data, imageFile) => {
             status: "OK",
             message: "Tạo tài khoản thành công!",
             data: {
+              _id: newUser._id,
+              isAdmin: newUser.isAdmin,
               name: newUser.name,
               email: newUser.email,
               address: newUser.address,
               phone: newUser.phone,
+              createdAt: newUser.createdAt,
+              updatedAt: newUser.updatedAt,
             },
           });
         }
@@ -91,7 +95,16 @@ const loginUser = (data) => {
           data: {
             access_token,
             refresh_token,
-            user: { email: user.email, name: user.name },
+            user: {
+              _id: user._id,
+              isAdmin: user.isAdmin,
+              name: user.name,
+              email: user.email,
+              address: user.address,
+              phone: user.phone,
+              createdAt: user.createdAt,
+              updatedAt: user.updatedAt,
+            },
           },
         });
       }
@@ -124,7 +137,7 @@ const getUserById = (userId) => {
       const user = await User.findById(userId);
       if (!user) {
         resolve({
-          status: "OK",
+          status: "ERR",
           message: "Không tìm thấy tài khoản!",
         });
       }
