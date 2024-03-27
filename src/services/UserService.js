@@ -44,7 +44,12 @@ const createUser = (data, imageFile) => {
           resolve({
             status: "OK",
             message: "Tạo tài khoản thành công!",
-            data: newUser,
+            data: {
+              name: newUser.name,
+              email: newUser.email,
+              address: newUser.address,
+              phone: newUser.phone,
+            },
           });
         }
       }
