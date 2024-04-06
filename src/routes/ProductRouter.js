@@ -9,11 +9,10 @@ const {
 
 router.post(
   "/create",
-  authAdminMiddleware,
   uploadProductCloud.single("image"),
   ProductController.createProduct
 );
-router.get("/get-all", authUserMiddleware, ProductController.getAllProducts);
+router.get("/get-all", ProductController.getProducts);
 router.get(
   "/get-by-id/:id",
   authUserMiddleware,
@@ -25,10 +24,6 @@ router.patch(
   uploadProductCloud.single("image"),
   ProductController.updateProduct
 );
-router.delete(
-  "/delete/:id",
-  authAdminMiddleware,
-  ProductController.deleteProduct
-);
+router.delete("/delete/:id", ProductController.deleteProduct);
 
 module.exports = router;

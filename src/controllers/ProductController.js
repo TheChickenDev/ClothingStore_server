@@ -20,9 +20,28 @@ const createProduct = async (req, res) => {
   }
 };
 
-const getAllProducts = async (req, res) => {
+const getProducts = async (req, res) => {
   try {
-    const response = await ProductService.getAllProducts();
+    const {
+      limit,
+      page,
+      sort_by,
+      order,
+      price_min,
+      price_max,
+      rating_filter,
+      name,
+    } = req.query;
+    const response = await ProductService.getProducts(
+      Number(limit) || 8,
+      Number(page) || 1,
+      sort_by,
+      order,
+      Number(price_min) || 0,
+      Number(price_max) || 999999999,
+      Number(rating_filter) || 0,
+      name || ""
+    );
     return res.status(200).json(response);
   } catch (error) {
     return res.status(404).json({
@@ -81,7 +100,7 @@ const deleteProduct = async (req, res) => {
 
 module.exports = {
   createProduct,
-  getAllProducts,
+  getProducts,
   getProductById,
   updateProduct,
   deleteProduct,

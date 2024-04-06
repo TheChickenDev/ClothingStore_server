@@ -3,7 +3,16 @@ const cloudinary = require("cloudinary").v2;
 
 const createProduct = (data, imageFile) => {
   return new Promise(async (resolve, reject) => {
-    const { name, desc, type, price } = data;
+    const {
+      name,
+      desc,
+      type,
+      price,
+      price_before_discount,
+      quantity,
+      sold,
+      view,
+    } = data;
     try {
       const checkedProduct = await Product.findOne({ name });
       if (checkedProduct) {
@@ -16,14 +25,18 @@ const createProduct = (data, imageFile) => {
         });
       } else {
         const img = imageFile?.path;
-        const imgID = imageFile?.filename;
+        const imgPath = imageFile?.filename;
         const newProduct = await Product.create({
           name,
           desc,
           type,
           price,
+          price_before_discount,
+          quantity,
+          sold,
+          view,
           img,
-          imgID,
+          imgPath,
         });
         if (newProduct) {
           resolve({
@@ -39,15 +52,45 @@ const createProduct = (data, imageFile) => {
   });
 };
 
-const getAllProducts = () => {
+const getProducts = (
+  limit,
+  page,
+  sort_by,
+  order,
+  price_min,
+  price_max,
+  rating_filter,
+  name
+) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const productList = await Product.find();
+      const counter = await Product.countDocuments();
+      let productList;
+      if (sort_by && order) {
+        productList = await Product.find({
+          price: { $gte: price_min, $lte: price_max },
+          rating: { $gte: rating_filter },
+          name: { $regex: new RegExp(name, "i") },
+        })
+          .sort({ [sort_by]: order })
+          .limit(limit)
+          .skip(limit * (page - 1));
+      } else {
+        productList = await Product.find({
+          price: { $gte: price_min, $lte: price_max },
+          rating: { $gte: rating_filter },
+          name: { $regex: new RegExp(name, "i") },
+        })
+          .limit(limit)
+          .skip(limit * page);
+      }
       if (productList) {
         resolve({
           status: "OK",
           message: "Lấy danh sách sản phẩm thành công!",
           data: productList,
+          currentPage: Number(page),
+          totalPage: Math.ceil(counter / limit),
         });
       }
     } catch (error) {
@@ -84,11 +127,11 @@ const updateProduct = (data, productId, imageFile) => {
       const product = await Product.findById(productId);
       if (product) {
         const img = imageFile?.path;
-        const imgID = imageFile?.filename;
-        newData = { ...data, img, imgID };
+        const imgPath = imageFile?.filename;
+        newData = { ...data, img, imgPath };
 
-        if (product?.imgID && imageFile) {
-          var imageID = product.imgID;
+        if (product?.imgPath && imageFile) {
+          var imageID = product.imgPath;
           if (imageID) cloudinary.uploader.destroy(imageID);
         }
 
@@ -120,9 +163,9 @@ const deleteProduct = (productId) => {
     try {
       const product = await Product.findById(productId);
       if (product) {
-        if (product?.imgID) {
-          var imageID = product.imgID;
-          if (imageID) cloudinary.uploader.destroy(imageID);
+        if (product?.imgPath) {
+          var imgPath = product.imgPath;
+          if (imgPath) cloudinary.uploader.destroy(imgPath);
         }
         await Product.findByIdAndDelete(productId);
         resolve({
@@ -143,7 +186,7 @@ const deleteProduct = (productId) => {
 
 module.exports = {
   createProduct,
-  getAllProducts,
+  getProducts,
   getProductById,
   updateProduct,
   deleteProduct,

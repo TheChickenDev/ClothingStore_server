@@ -27,7 +27,7 @@ const createUser = (data, imageFile) => {
         });
       } else {
         const avatar = imageFile?.path;
-        const avatarID = imageFile?.filename;
+        const avatarPath = imageFile?.filename;
         const hashPassword = bcrypt.hashSync(password, 12);
         const newUser = await User.create({
           name,
@@ -38,7 +38,7 @@ const createUser = (data, imageFile) => {
           phone,
           cart,
           avatar,
-          avatarID,
+          avatarPath,
         });
         if (newUser) {
           resolve({
@@ -171,12 +171,12 @@ const updateUser = (userId, data, imageFile) => {
           message: "Tài khoản không tồn tại!",
         });
       }
-      if (user?.avatarID && imageFile) {
-        var imageID = user.avatarID;
+      if (user?.avatarPath && imageFile) {
+        var imageID = user.avatarPath;
         if (imageID) cloudinary.uploader.destroy(imageID);
       }
       const avatar = imageFile?.path;
-      const avatarID = imageFile?.filename;
+      const avatarPath = imageFile?.filename;
       const hashPassword = password ? bcrypt.hashSync(password, 12) : undefined;
       const updatedUser = await User.findByIdAndUpdate(
         userId,
@@ -186,7 +186,7 @@ const updateUser = (userId, data, imageFile) => {
           address,
           phone,
           avatar,
-          avatarID,
+          avatarPath,
         },
         { new: true }
       );
@@ -211,7 +211,7 @@ const deleteUser = (userId) => {
           message: "Không tìm thấy tài khoản!",
         });
       }
-      const imageID = user?.avatarID;
+      const imageID = user?.avatarPath;
       if (imageID) cloudinary.uploader.destroy(imageID);
       await User.findByIdAndDelete(userId);
       resolve({

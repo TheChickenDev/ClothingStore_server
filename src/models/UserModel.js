@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema(
       required: false,
       default: "",
     },
-    avatarID: {
+    avatarPath: {
       type: String,
       required: false,
       default: "",
