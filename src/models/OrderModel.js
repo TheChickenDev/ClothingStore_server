@@ -3,10 +3,14 @@ const mongoose = require("mongoose");
 const orderSchema = new mongoose.Schema({
   customerId: { type: String, required: true },
   orderDate: { type: Date, required: true },
-  deliveryDate: { type: Date, required: false },
+  deliveryDate: {
+    type: Date,
+    required: true,
+  },
   isCompleted: {
     type: Boolean,
-    required: true,
+    required: false,
+    default: false,
   },
   products: [
     {
@@ -26,11 +30,15 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         required: true,
       },
+      img: {
+        type: String,
+        required: true,
+      },
     },
   ],
   totalAmount: {
     type: Number,
-    required: true,
+    required: false,
   },
   note: {
     type: String,
