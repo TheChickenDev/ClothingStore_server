@@ -40,19 +40,32 @@ const createUser = (data, imageFile) => {
           avatar,
           avatarPath,
         });
+        const access_token = await JWTService.generateAccessToken({
+          id: newUser._id,
+          isAdmin: newUser.isAdmin,
+        });
+        const refresh_token = await JWTService.generateRefreshToken({
+          id: newUser._id,
+          isAdmin: newUser.isAdmin,
+        });
         if (newUser) {
           resolve({
             status: "OK",
             message: "Tạo tài khoản thành công!",
             data: {
-              _id: newUser._id,
-              isAdmin: newUser.isAdmin,
-              name: newUser.name,
-              email: newUser.email,
-              address: newUser.address,
-              phone: newUser.phone,
-              createdAt: newUser.createdAt,
-              updatedAt: newUser.updatedAt,
+              access_token,
+              refresh_token,
+              user: {
+                _id: newUser._id,
+                isAdmin: newUser.isAdmin,
+                name: newUser.name,
+                email: newUser.email,
+                address: newUser.address,
+                avatar: newUser.avatar,
+                phone: newUser.phone,
+                createdAt: newUser.createdAt,
+                updatedAt: newUser.updatedAt,
+              },
             },
           });
         }
@@ -101,6 +114,7 @@ const loginUser = (data) => {
               name: user.name,
               email: user.email,
               address: user.address,
+              avatar: user.avatar,
               phone: user.phone,
               createdAt: user.createdAt,
               updatedAt: user.updatedAt,
