@@ -6,8 +6,16 @@ const {
   authUserMiddleware,
 } = require("../middlewares/authMiddleware");
 
-router.post("/create", OrderController.createOrder);
-router.get("/get-by-user/:id", OrderController.getOrderByUser);
-router.patch("/complete/:id", OrderController.completeOrder);
+router.post("/create", authUserMiddleware, OrderController.createOrder);
+router.get(
+  "/get-by-user/:id",
+  authUserMiddleware,
+  OrderController.getOrderByUser
+);
+router.patch(
+  "/complete/:id",
+  authUserMiddleware,
+  OrderController.completeOrder
+);
 
 module.exports = router;

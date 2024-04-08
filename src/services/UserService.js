@@ -43,10 +43,14 @@ const createUser = (data, imageFile) => {
         const access_token = await JWTService.generateAccessToken({
           id: newUser._id,
           isAdmin: newUser.isAdmin,
+          email: newUser.email,
+          avatar: newUser.avatar,
         });
         const refresh_token = await JWTService.generateRefreshToken({
           id: newUser._id,
           isAdmin: newUser.isAdmin,
+          email: newUser.email,
+          avatar: newUser.avatar,
         });
         if (newUser) {
           resolve({
@@ -97,10 +101,14 @@ const loginUser = (data) => {
         const access_token = await JWTService.generateAccessToken({
           id: user._id,
           isAdmin: user.isAdmin,
+          email: user.email,
+          avatar: user.avatar,
         });
         const refresh_token = await JWTService.generateRefreshToken({
           id: user._id,
           isAdmin: user.isAdmin,
+          email: user.email,
+          avatar: user.avatar,
         });
         resolve({
           status: "OK",

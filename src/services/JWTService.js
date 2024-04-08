@@ -8,7 +8,7 @@ const generateAccessToken = async (payload) => {
       ...payload,
     },
     process.env.ACCESS_TOKEN,
-    { expiresIn: "1h" }
+    { expiresIn: "10s" }
   );
   return access_token;
 };
@@ -34,7 +34,7 @@ const refreshTokenService = (token) => {
             message: "THE AUTHENTICATION",
           });
         }
-        const access_token = await generalAccessToken({
+        const access_token = await generateAccessToken({
           id: user?.id,
           isAdmin: user?.isAdmin,
         });

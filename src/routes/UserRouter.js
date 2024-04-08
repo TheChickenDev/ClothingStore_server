@@ -29,5 +29,6 @@ router.patch(
   UserController.removeFromCart
 );
 router.patch("/clear-cart/:id", authUserMiddleware, UserController.clearCart);
+router.post("/refresh-token", UserController.refreshToken);
 
 module.exports = router;
