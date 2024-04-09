@@ -13,7 +13,7 @@ router.post(
   uploadProductCloud.single("image"),
   ProductController.createProduct
 );
-router.get("/get-all", ProductController.getProducts);
+router.get("/get", ProductController.getProducts);
 router.get(
   "/get-by-id/:id",
   authUserMiddleware,

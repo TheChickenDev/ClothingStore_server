@@ -12,6 +12,7 @@ const createProduct = (data, imageFile) => {
       quantity,
       sold,
       view,
+      rating,
     } = data;
     try {
       const checkedProduct = await Product.findOne({ name });
@@ -35,6 +36,7 @@ const createProduct = (data, imageFile) => {
           quantity,
           sold,
           view,
+          rating,
           img,
           imgPath,
         });
@@ -88,9 +90,11 @@ const getProducts = (
         resolve({
           status: "OK",
           message: "Lấy danh sách sản phẩm thành công!",
-          data: productList,
-          currentPage: Number(page),
-          totalPage: Math.ceil(counter / limit),
+          data: {
+            productList,
+            currentPage: Number(page),
+            totalPage: Math.ceil(counter / limit),
+          },
         });
       }
     } catch (error) {
