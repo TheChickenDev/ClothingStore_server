@@ -5,7 +5,7 @@
 **
 1. User:
 2. Product:
-   * Get products: _product/getAll
+   * Get products: _product/getAll_
       - Params (optional):
         + limit: number
         + page: number
@@ -15,5 +15,8 @@
         + price_max: number
         + rating_filter: number (gte)
         + name: string
+      - Authorization is not required
+    * Get product by id: _product/get-by-id_
+      - Params (required): id
       - Authorization is not required
 3. Order:
