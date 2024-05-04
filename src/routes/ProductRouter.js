@@ -14,11 +14,7 @@ router.post(
   ProductController.createProduct
 );
 router.get("/get", ProductController.getProducts);
-router.get(
-  "/get-by-id/:id",
-  authUserMiddleware,
-  ProductController.getProductById
-);
+router.get("/get-by-id/:id", ProductController.getProductById);
 router.patch(
   "/update/:id",
   authAdminMiddleware,

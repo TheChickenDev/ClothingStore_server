@@ -67,9 +67,9 @@ const getProducts = (
   return new Promise(async (resolve, reject) => {
     try {
       const counter = await Product.countDocuments();
-      let productList;
+      let products;
       if (sort_by && order) {
-        productList = await Product.find({
+        products = await Product.find({
           price: { $gte: price_min, $lte: price_max },
           rating: { $gte: rating_filter },
           name: { $regex: new RegExp(name, "i") },
@@ -78,22 +78,23 @@ const getProducts = (
           .limit(limit)
           .skip(limit * (page - 1));
       } else {
-        productList = await Product.find({
+        products = await Product.find({
           price: { $gte: price_min, $lte: price_max },
           rating: { $gte: rating_filter },
           name: { $regex: new RegExp(name, "i") },
         })
           .limit(limit)
-          .skip(limit * page);
+          .skip(limit * (page - 1));
       }
-      if (productList) {
+      if (products) {
         resolve({
           status: "OK",
           message: "Lấy danh sách sản phẩm thành công!",
           data: {
-            productList,
+            products,
             currentPage: Number(page),
             totalPage: Math.ceil(counter / limit),
+            totalProduct: counter,
           },
         });
       }

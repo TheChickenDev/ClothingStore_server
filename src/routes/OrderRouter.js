@@ -14,7 +14,7 @@ router.get(
 );
 router.patch(
   "/complete/:id",
-  authUserMiddleware,
+  authAdminMiddleware,
   OrderController.completeOrder
 );
 

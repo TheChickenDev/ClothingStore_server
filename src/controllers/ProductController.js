@@ -32,7 +32,7 @@ const getProducts = async (req, res) => {
       name,
     } = req.query;
     const response = await ProductService.getProducts(
-      Number(limit) || 8,
+      Number(limit) || 9,
       Number(page) || 1,
       sort_by,
       order,
