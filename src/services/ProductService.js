@@ -62,27 +62,26 @@ const getProducts = (
   price_min,
   price_max,
   rating_filter,
-  name
+  name,
+  type
 ) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const counter = await Product.countDocuments();
+      const filter = {
+        price: { $gte: price_min, $lte: price_max },
+        rating: { $gte: rating_filter },
+        name: { $regex: new RegExp(name, "i") },
+        type: type || { $exists: true },
+      };
+      const counter = await Product.countDocuments(filter);
       let products;
       if (sort_by && order) {
-        products = await Product.find({
-          price: { $gte: price_min, $lte: price_max },
-          rating: { $gte: rating_filter },
-          name: { $regex: new RegExp(name, "i") },
-        })
+        products = await Product.find(filter)
           .sort({ [sort_by]: order })
           .limit(limit)
           .skip(limit * (page - 1));
       } else {
-        products = await Product.find({
-          price: { $gte: price_min, $lte: price_max },
-          rating: { $gte: rating_filter },
-          name: { $regex: new RegExp(name, "i") },
-        })
+        products = await Product.find(filter)
           .limit(limit)
           .skip(limit * (page - 1));
       }

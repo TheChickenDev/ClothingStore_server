@@ -30,6 +30,7 @@ const getProducts = async (req, res) => {
       price_max,
       rating_filter,
       name,
+      type,
     } = req.query;
     const response = await ProductService.getProducts(
       Number(limit) || 9,
@@ -39,7 +40,8 @@ const getProducts = async (req, res) => {
       Number(price_min) || 0,
       Number(price_max) || 999999999,
       Number(rating_filter) || 0,
-      name || ""
+      name || "",
+      type || ""
     );
     return res.status(200).json(response);
   } catch (error) {
