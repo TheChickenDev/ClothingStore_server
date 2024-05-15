@@ -2,6 +2,8 @@ const User = require("../models/UserModel");
 const bcrypt = require("bcrypt");
 const cloudinary = require("cloudinary").v2;
 const JWTService = require("./JWTService");
+const nodemailer = require("nodemailer");
+const jwt = require("jsonwebtoken");
 
 const createUser = (data, imageFile) => {
   return new Promise(async (resolve, reject) => {
@@ -328,6 +330,167 @@ const clearCart = (userId) => {
   });
 };
 
+const forgotPassword = (email, operating_system) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const user = await User.findOne({ email });
+      if (!user) {
+        resolve({
+          status: "ERR",
+          message: "Email không tồn tại!",
+        });
+      }
+
+      const { reset_token, randomNumber } =
+        await JWTService.generateResetPasswordToken(email);
+
+      const from = `HeinShop <${process.env.MY_EMAIL}>`;
+      const subject = "Reset password OTP";
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <style>
+        body {
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: #f7f7f7;
+        }
+
+        .container {
+          width: 80%;
+          margin: 0 auto;
+          background-color: #f1f1f1;
+          padding: 20px;
+          border-radius: 4px;
+        }
+
+        .otp {
+          max-width: 100px;
+          background-color: #f50963;
+          padding: 10px;
+          border-radius: 4px;
+          text-align: center;
+          font-size: 18px;
+          font-weight: bold;
+          color: #fff;
+          margin: 20px auto;
+        }
+
+        .footer {
+          margin-top: 20px;
+          border-top: 1px solid #ddd;
+          padding-top: 20px;
+          font-size: 12px;
+          text-align: center;
+          color: #888;
+        }
+        </style>
+        </head>
+        <body>
+        <div class="container">
+          <h3>Hi ${user.name},</h3>
+          <p>You recently requested to reset your password for your HeinShop account. Use the OTP below to reset it. This password reset is only valid for the next 10 minutes.</p>
+          <div class="otp">${randomNumber}</div>
+          <p>For security, this request was received from a device using "${operating_system}". If you did not request a password reset, please ignore this email or contact support if you have questions.</p>
+          <p>Thanks,</p>
+          <p>The HeinShop Team</p>
+          <div class="footer">
+            © 2019 HeinShop. All rights reserved.<br>
+            Ho Chi Minh City University of Technology and Education<br>
+            1st Street Vo Van Ngan.<br>
+            Thu Duc District, Ho Chi Minh City
+          </div>
+        </div>
+        </body>
+        </html>
+        `;
+
+      let mailOptions = {
+        from,
+        to: email,
+        subject,
+        html,
+      };
+
+      let transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.MY_EMAIL,
+          pass: process.env.MY_EMAIL_PASSWORD,
+        },
+      });
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          resolve({
+            status: "ERR",
+            message: error.message,
+          });
+        } else {
+          resolve({
+            status: "OK",
+            message: `OTP đã được gửi về ${email}!`,
+            data: { reset_token },
+          });
+        }
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+const resetPassword = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { key, token, password, confirm_password } = data;
+      jwt.verify(token, process.env.ACCESS_TOKEN, async (err, payload) => {
+        if (err) {
+          return resolve({
+            status: "ERR",
+            message: "Yêu cầu đã hết hạn!",
+          });
+        }
+        const user = await User.findOne({ email: payload.email });
+        if (!user) {
+          return resolve({
+            status: "ERR",
+            message: "Email không tồn tại!",
+          });
+        }
+        if (Number(key) !== payload.key) {
+          return resolve({
+            status: "ERR",
+            message: "OTP không chính xác!",
+          });
+        }
+        if (password !== confirm_password) {
+          return resolve({
+            status: "ERR",
+            message: "Mật khẩu không khớp!",
+          });
+        }
+        const hashPassword = bcrypt.hashSync(password, 12);
+        await User.findOneAndUpdate(
+          { email: payload.email },
+          {
+            password: hashPassword,
+          },
+          { new: true }
+        );
+        return resolve({
+          status: "OK",
+          message: "Đặt lại mật khẩu thành công!",
+        });
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   createUser,
   loginUser,
@@ -338,4 +501,6 @@ module.exports = {
   addToCart,
   removeFromCart,
   clearCart,
+  forgotPassword,
+  resetPassword,
 };

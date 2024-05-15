@@ -1,6 +1,7 @@
 const UserService = require("../services/UserService");
 const JWTService = require("../services/JWTService");
 const cloudinary = require("cloudinary").v2;
+const useragent = require("useragent");
 
 const createUser = async (req, res) => {
   try {
@@ -172,6 +173,37 @@ const clearCart = async (req, res) => {
   }
 };
 
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const agent = useragent.parse(req.headers["user-agent"]);
+    const operating_system = agent.os.toString();
+    const response = await UserService.forgotPassword(email, operating_system);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { key, token, password, confirm_password } = req.body;
+    const response = await UserService.resetPassword({
+      key,
+      token,
+      password,
+      confirm_password,
+    });
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
+
 module.exports = {
   createUser,
   loginUser,
@@ -183,4 +215,6 @@ module.exports = {
   addToCart,
   removeFromCart,
   clearCart,
+  forgotPassword,
+  resetPassword,
 };

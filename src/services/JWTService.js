@@ -50,8 +50,24 @@ const refreshTokenService = (token) => {
   });
 };
 
+const generateResetPasswordToken = async (email) => {
+  const currentDate = new Date();
+  let randomNumber = Math.floor(Math.random() * (999999 - 100000 + 1)) + 100000;
+  const reset_token = jwt.sign(
+    {
+      email,
+      key: randomNumber,
+      date: currentDate.toISOString(),
+    },
+    process.env.ACCESS_TOKEN,
+    { expiresIn: "10m" }
+  );
+  return { reset_token, randomNumber };
+};
+
 module.exports = {
   generateAccessToken,
   generateRefreshToken,
   refreshTokenService,
+  generateResetPasswordToken,
 };
