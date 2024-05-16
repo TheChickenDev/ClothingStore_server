@@ -18,7 +18,7 @@ const userStorage = new CloudinaryStorage({
 
 const productStorage = new CloudinaryStorage({
   cloudinary,
-  allowedFormats: ["jpg", "png"],
+  allowedFormats: ["jpg", "png", "jpeg"],
   params: {
     folder: "clothingstore/products",
   },

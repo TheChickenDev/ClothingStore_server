@@ -181,7 +181,7 @@ const updateUser = (userId, data, imageFile) => {
     try {
       const { name, password, address, phone } = data;
       const checkUserByPhone = await User.findOne({ phone });
-      if (checkUserByPhone) {
+      if (checkUserByPhone && checkUserByPhone.phone !== phone) {
         resolve({
           status: "ERR",
           message: "Số điện thoại đã tồn tại!",
@@ -432,7 +432,7 @@ const forgotPassword = (email, operating_system) => {
           resolve({
             status: "OK",
             message: `OTP đã được gửi về ${email}!`,
-            data: { reset_token },
+            data: reset_token,
           });
         }
       });

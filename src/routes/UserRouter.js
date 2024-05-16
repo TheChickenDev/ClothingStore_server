@@ -13,7 +13,7 @@ router.post(
   UserController.createUser
 );
 router.post("/login", UserController.loginUser);
-router.get("/forgot-password", UserController.forgotPassword);
+router.post("/forgot-password", UserController.forgotPassword);
 router.patch("/reset-password", UserController.resetPassword);
 router.get("/get-all", authAdminMiddleware, UserController.getAllUser);
 router.get("/get-by-id/:id", authUserMiddleware, UserController.getUserById);
