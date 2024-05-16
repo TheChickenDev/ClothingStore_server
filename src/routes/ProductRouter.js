@@ -9,7 +9,7 @@ const {
 
 router.post(
   "/create",
-  authAdminMiddleware,
+  // authAdminMiddleware,
   uploadProductCloud.single("image"),
   ProductController.createProduct
 );
