@@ -54,6 +54,40 @@ const createProduct = (data, imageFile) => {
   });
 };
 
+const addThumbnail = (productId, imageFile) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const product = await Product.findById(productId);
+      if (product) {
+        const img = imageFile?.path;
+        const imgPath = imageFile?.filename;
+        thumbnail = product.thumbnail;
+        thumbnail.push({ url: img, path: imgPath });
+        newData = { ...product, thumbnail };
+
+        updatedProduct = await Product.findByIdAndUpdate(productId, newData, {
+          new: true,
+        });
+        resolve({
+          status: "OK",
+          message: "Thêm thumbnail thành công!",
+          data: updatedProduct,
+        });
+      } else {
+        if (imageFile) {
+          cloudinary.uploader.destroy(imageFile.filename);
+        }
+        resolve({
+          status: "ERR",
+          message: "Không tìm thấy sản phẩm!",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 const getProducts = (
   limit,
   page,
@@ -190,6 +224,7 @@ const deleteProduct = (productId) => {
 
 module.exports = {
   createProduct,
+  addThumbnail,
   getProducts,
   getProductById,
   updateProduct,

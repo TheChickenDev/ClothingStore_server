@@ -19,6 +19,25 @@ const createProduct = async (req, res) => {
   }
 };
 
+const addThumbnail = async (req, res) => {
+  try {
+    const id = req.params.id;
+    if (!id) {
+      return res.status(200).json({
+        status: "ERR",
+        message: "Các trường không được để trống!",
+      });
+    }
+    const imageFile = req.file;
+    const response = await ProductService.addThumbnail(id, imageFile);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
+
 const getProducts = async (req, res) => {
   try {
     const {
@@ -101,6 +120,7 @@ const deleteProduct = async (req, res) => {
 
 module.exports = {
   createProduct,
+  addThumbnail,
   getProducts,
   getProductById,
   updateProduct,

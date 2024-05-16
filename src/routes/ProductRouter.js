@@ -13,6 +13,11 @@ router.post(
   uploadProductCloud.single("image"),
   ProductController.createProduct
 );
+router.patch(
+  "/add-thumbnail/:id",
+  uploadProductCloud.single("image"),
+  ProductController.addThumbnail
+);
 router.get("/get", ProductController.getProducts);
 router.get("/get-by-id/:id", ProductController.getProductById);
 router.patch(
