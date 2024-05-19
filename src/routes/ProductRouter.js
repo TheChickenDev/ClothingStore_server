@@ -2,19 +2,17 @@ const express = require("express");
 const router = express.Router();
 const ProductController = require("../controllers/ProductController");
 const { uploadProductCloud } = require("../middlewares/uploadFileMiddleware");
-const {
-  authAdminMiddleware,
-  authUserMiddleware,
-} = require("../middlewares/authMiddleware");
+const { authAdminMiddleware } = require("../middlewares/authMiddleware");
 
 router.post(
   "/create",
-  // authAdminMiddleware,
+  authAdminMiddleware,
   uploadProductCloud.single("image"),
   ProductController.createProduct
 );
 router.patch(
   "/add-thumbnail/:id",
+  authAdminMiddleware,
   uploadProductCloud.single("image"),
   ProductController.addThumbnail
 );

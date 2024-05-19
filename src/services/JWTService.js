@@ -8,7 +8,7 @@ const generateAccessToken = async (payload) => {
       ...payload,
     },
     process.env.ACCESS_TOKEN,
-    { expiresIn: "5m" }
+    { expiresIn: "10s" }
   );
   return access_token;
 };
@@ -41,7 +41,7 @@ const refreshTokenService = (token) => {
         resolve({
           status: "OK",
           message: "REFRESH TOKEN SUCCESS",
-          access_token,
+          data: access_token,
         });
       });
     } catch (error) {

@@ -20,7 +20,6 @@ const createOrder = (data) => {
         note,
         paymentMethod,
       });
-      console.log(newOrder);
       if (newOrder) {
         resolve({
           status: "OK",
