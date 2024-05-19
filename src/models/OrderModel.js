@@ -40,6 +40,14 @@ const orderSchema = new mongoose.Schema({
       },
     },
   ],
+  price: {
+    type: Number,
+    required: true,
+  },
+  shippingFee: {
+    type: Number,
+    required: true,
+  },
   totalAmount: {
     type: Number,
     required: false,

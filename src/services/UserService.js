@@ -1,4 +1,5 @@
 const User = require("../models/UserModel");
+const Order = require("../models/OrderModel");
 const bcrypt = require("bcrypt");
 const cloudinary = require("cloudinary").v2;
 const JWTService = require("./JWTService");
@@ -251,7 +252,7 @@ const deleteUser = (userId) => {
 const addToCart = (userId, data) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { productId, name, img, quantity, price } = data;
+      const { productId, name, img, size, quantity, price } = data;
       const user = await User.findById(userId);
       if (!user) {
         resolve({
@@ -260,10 +261,10 @@ const addToCart = (userId, data) => {
         });
       }
       const product = user.cart?.find((item) => item.productId === productId);
-      if (product) {
+      if (product && product.size === size) {
         product.quantity = parseInt(product.quantity) + parseInt(quantity);
       } else {
-        user.cart.push({ productId, name, img, quantity, price });
+        user.cart.push({ productId, name, img, size, quantity, price });
       }
       await user.save();
       resolve({
@@ -276,7 +277,7 @@ const addToCart = (userId, data) => {
   });
 };
 
-const removeFromCart = (userId, productId) => {
+const removeFromCart = (userId, productId, size) => {
   return new Promise(async (resolve, reject) => {
     try {
       const user = await User.findById(userId);
@@ -287,7 +288,7 @@ const removeFromCart = (userId, productId) => {
         });
       }
       const productIndex = user.cart.findIndex(
-        (item) => item.productId === productId
+        (item) => item.productId === productId && item.size === size
       );
       if (productIndex !== -1) {
         user.cart.splice(productIndex, 1);
@@ -300,6 +301,57 @@ const removeFromCart = (userId, productId) => {
         resolve({
           status: "ERR",
           message: "Không tìm thấy sản phẩm trong giỏ hàng!",
+        });
+      }
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
+const payment = (userId, data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const user = await User.findById(userId);
+      if (!user) {
+        resolve({
+          status: "ERR",
+          message: "Tài khoản không tồn tại!",
+        });
+      }
+      const {
+        orderDate,
+        deliveryDate,
+        price,
+        shippingFee,
+        totalAmount,
+        note,
+        paymentMethod,
+      } = data;
+      if (!orderDate || !deliveryDate || !price || !shippingFee) {
+        resolve({
+          status: "ERR",
+          message: "Dữ liệu đơn hàng không được để trống!",
+        });
+      }
+      const newOrder = await Order.create({
+        customerId: userId,
+        orderDate,
+        deliveryDate,
+        products: user.cart,
+        price,
+        shippingFee,
+        totalAmount,
+        note,
+        paymentMethod,
+      });
+      if (newOrder) {
+        user.cart = [];
+        await user.save();
+        resolve({
+          status: "OK",
+          message: "Đặt hàng thành công!",
+          data: newOrder,
         });
       }
     } catch (error) {
@@ -500,6 +552,7 @@ module.exports = {
   deleteUser,
   addToCart,
   removeFromCart,
+  payment,
   clearCart,
   forgotPassword,
   resetPassword,

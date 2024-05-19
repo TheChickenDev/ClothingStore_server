@@ -131,8 +131,8 @@ const addToCart = async (req, res) => {
     const userId = req.params.id;
     const data = req.body;
 
-    const { productId, name, img, quantity, price } = data;
-    if (!productId || !name || !img || !quantity || !price) {
+    const { productId, name, img, size, quantity, price } = data;
+    if (!productId || !name || !img || !size || !quantity || !price) {
       return res.status(200).json({
         status: "ERR",
         message: "Không có dữ liệu sản phẩm!",
@@ -151,8 +151,21 @@ const addToCart = async (req, res) => {
 const removeFromCart = async (req, res) => {
   try {
     const userId = req.params.id;
-    const { productId } = req.body;
-    const response = await UserService.removeFromCart(userId, productId);
+    const { productId, size } = req.body;
+    const response = await UserService.removeFromCart(userId, productId, size);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(400).json({
+      message: error,
+    });
+  }
+};
+
+const payment = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const data = req.body;
+    const response = await UserService.payment(userId, data);
     return res.status(200).json(response);
   } catch (error) {
     return res.status(400).json({
@@ -214,6 +227,7 @@ module.exports = {
   deleteUser,
   addToCart,
   removeFromCart,
+  payment,
   clearCart,
   forgotPassword,
   resetPassword,

@@ -16,7 +16,7 @@ router.post("/login", UserController.loginUser);
 router.post("/forgot-password", UserController.forgotPassword);
 router.patch("/reset-password", UserController.resetPassword);
 router.get("/get-all", authAdminMiddleware, UserController.getAllUser);
-router.get("/get-by-id/:id", authUserMiddleware, UserController.getUserById);
+router.get("/get-by-id/:id", UserController.getUserById);
 router.patch(
   "/update/:id",
   authUserMiddleware,
@@ -24,13 +24,10 @@ router.patch(
   UserController.updateUser
 );
 router.delete("/delete/:id", authAdminMiddleware, UserController.deleteUser);
-router.patch("/add-to-cart/:id", authUserMiddleware, UserController.addToCart);
-router.patch(
-  "/remove-from-cart/:id",
-  authUserMiddleware,
-  UserController.removeFromCart
-);
-router.patch("/clear-cart/:id", authUserMiddleware, UserController.clearCart);
+router.patch("/add-to-cart/:id", UserController.addToCart);
+router.patch("/remove-from-cart/:id", UserController.removeFromCart);
+router.post("/payment/:id", UserController.payment);
+router.patch("/clear-cart/:id", UserController.clearCart);
 router.post("/refresh-token", UserController.refreshToken);
 
 module.exports = router;
