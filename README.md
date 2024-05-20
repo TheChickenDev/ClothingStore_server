@@ -23,13 +23,13 @@ A step by step series of examples that tell you how to get a development environ
 3. Install the dependencies using `yarn install`.
 4. Start the MongoDB service.
 5. Create a `.env` file in the root directory and set up your environment variables:
-    MONGO_URI
-    CLOUDINARY_NAME
-    CLOUDINARY_KEY
-    CLOUDINARY_SECRET
-    ACCESS_TOKEN
-    REFRESH_TOKEN
-    MY_EMAIL
+    MONGO_URI,
+    CLOUDINARY_NAME,
+    CLOUDINARY_KEY,
+    CLOUDINARY_SECRET,
+    ACCESS_TOKEN,
+    REFRESH_TOKEN,
+    MY_EMAIL,
     MY_EMAIL_PASSWORD
 7. Start the server using `yarn start`.
 
