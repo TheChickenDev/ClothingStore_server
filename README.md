@@ -1,25 +1,47 @@
-﻿# ClothingStore_server
+# Clothing store server
 
-- **Base URL**: _host/api/_
-- **Authorization**: _headers.authorization = Bearer ...jwt_
-1. User:
-2. Product:
-   ```
-   * Get products: _product/getAll_
-      - Params (optional):
-        + limit: number
-        + page: number
-        + sort_by: "price" | "view" | "sold" | "rating"
-        + order: "asc" | "desc"
-        + price_min: number
-        + price_max: number
-        + rating_filter: number (gte)
-        + name: string
-      - Authorization is not required
-   ```
-   ```
-    * Get product by id: _product/get-by-id_
-      - Params (required): id
-      - Authorization is not required
-   ```
-4. Order:
+This is a server built with Node.js, Express.js, MongoDB, and JWT for authentication.
+
+## Getting Started
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
+### Prerequisites
+
+What things you need to install the software and how to install them:
+
+- Node.js
+- MongoDB
+- yarn
+
+### Installing
+
+A step by step series of examples that tell you how to get a development environment running:
+
+1. Clone the repository to your local machine using `git clone <repository_link>`.
+2. Navigate to the project directory using `cd <project_directory>`.
+3. Install the dependencies using `yarn install`.
+4. Start the MongoDB service.
+5. Create a `.env` file in the root directory and set up your environment variables (e.g., `DB_CONNECTION`, `TOKEN_SECRET`).
+6. Start the server using `yarn start`.
+
+## Running the tests
+
+Explain how to run the automated tests for this system:
+
+- Run `yarn test`.
+
+## Built With
+
+- [Node.js](https://nodejs.org/) - The runtime environment
+- [Express.js](https://expressjs.com/) - The web application framework
+- [MongoDB](https://www.mongodb.com/) - The database used
+- [JWT](https://jwt.io/) - Used for authentication
+
+## Contributing
+
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
