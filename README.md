@@ -22,8 +22,16 @@ A step by step series of examples that tell you how to get a development environ
 2. Navigate to the project directory using `cd <project_directory>`.
 3. Install the dependencies using `yarn install`.
 4. Start the MongoDB service.
-5. Create a `.env` file in the root directory and set up your environment variables (e.g., `DB_CONNECTION`, `TOKEN_SECRET`).
-6. Start the server using `yarn start`.
+5. Create a `.env` file in the root directory and set up your environment variables:
+    MONGO_URI
+    CLOUDINARY_NAME
+    CLOUDINARY_KEY
+    CLOUDINARY_SECRET
+    ACCESS_TOKEN
+    REFRESH_TOKEN
+    MY_EMAIL
+    MY_EMAIL_PASSWORD
+7. Start the server using `yarn start`.
 
 ## Running the tests
 
@@ -37,7 +45,3 @@ Explain how to run the automated tests for this system:
 - [Express.js](https://expressjs.com/) - The web application framework
 - [MongoDB](https://www.mongodb.com/) - The database used
 - [JWT](https://jwt.io/) - Used for authentication
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
