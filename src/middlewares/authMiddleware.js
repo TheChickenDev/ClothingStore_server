@@ -6,14 +6,14 @@ const authAdminMiddleware = (req, res, next) => {
   const token = req.headers.access_token?.split(" ")[1];
   if (!token) {
     return res.status(401).json({
-      status: "ERROR",
+      status: "ERR",
       message: "THE AUTHORIZATION",
     });
   }
   jwt.verify(token, process.env.ACCESS_TOKEN, function (err, user) {
     if (err) {
       return res.status(401).json({
-        status: "ERROR",
+        status: "ERR",
         message: "THE AUTHORIZATION",
       });
     }
@@ -21,7 +21,7 @@ const authAdminMiddleware = (req, res, next) => {
       next();
     } else {
       return res.status(401).json({
-        status: "ERROR",
+        status: "ERR",
         message: "THE AUTHORIZATION",
       });
     }
@@ -32,7 +32,7 @@ const authUserMiddleware = (req, res, next) => {
   const token = req.headers.access_token?.split(" ")[1];
   if (!token) {
     return res.status(401).json({
-      status: "ERROR",
+      status: "ERR",
       message: "THE AUTHORIZATION",
     });
   }
@@ -40,7 +40,7 @@ const authUserMiddleware = (req, res, next) => {
   jwt.verify(token, process.env.ACCESS_TOKEN, function (err, user) {
     if (err) {
       return res.status(401).json({
-        status: "ERROR",
+        status: "ERR",
         message: "THE AUTHORIZATION",
       });
     }
@@ -48,7 +48,7 @@ const authUserMiddleware = (req, res, next) => {
       next();
     } else {
       return res.status(401).json({
-        status: "ERROR",
+        status: "ERR",
         message: "THE AUTHORIZATION",
       });
     }

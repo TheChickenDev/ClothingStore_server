@@ -521,7 +521,7 @@ const resetPassword = (data) => {
         if (password !== confirm_password) {
           return resolve({
             status: "ERR",
-            message: "Mật khẩu không khớp!",
+            message: "Mật khẩu nhập lại không khớp!",
           });
         }
         const hashPassword = bcrypt.hashSync(password, 12);
