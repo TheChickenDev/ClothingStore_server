@@ -36,7 +36,9 @@ const createOrder = (data) => {
 const getOrderByUser = (userId) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const orders = await Order.find({ customerId: userId });
+      const orders = await Order.find({ customerId: userId }).sort({
+        orderDate: -1,
+      });
       if (orders !== null && orders.length > 0) {
         resolve({
           status: "OK",
@@ -47,6 +49,7 @@ const getOrderByUser = (userId) => {
         resolve({
           status: "OK",
           message: "Chưa có đơn hàng nào!",
+          data: [],
         });
       }
     } catch (error) {

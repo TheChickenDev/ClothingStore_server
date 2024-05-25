@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
   customerId: { type: String, required: true },
+  name: { type: String, required: true },
+  phone: { type: String, required: true },
+  address: { type: String, required: true },
   orderDate: { type: Date, required: true },
   deliveryDate: {
     type: Date,
@@ -58,7 +61,8 @@ const orderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    required: true,
+    required: false,
+    default: "COD",
   },
 });
 

@@ -9,7 +9,7 @@ const {
 
 router.post(
   "/register",
-  uploadUserCloud.single("image"),
+  uploadUserCloud.single("avatar"),
   UserController.createUser
 );
 router.post("/login", UserController.loginUser);
@@ -20,7 +20,7 @@ router.get("/get-by-id/:id", authUserMiddleware, UserController.getUserById);
 router.patch(
   "/update/:id",
   authUserMiddleware,
-  uploadUserCloud.single("image"),
+  uploadUserCloud.single("avatar"),
   UserController.updateUser
 );
 router.delete("/delete/:id", authAdminMiddleware, UserController.deleteUser);

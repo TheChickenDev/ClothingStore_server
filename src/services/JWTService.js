@@ -37,6 +37,11 @@ const refreshTokenService = (token) => {
         const access_token = await generateAccessToken({
           id: user?.id,
           isAdmin: user?.isAdmin,
+          email: user?.email,
+          avatar: user?.avatar,
+          name: user?.name,
+          phone: user?.phone,
+          address: user?.address,
         });
         resolve({
           status: "OK",

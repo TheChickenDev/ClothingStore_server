@@ -48,12 +48,18 @@ const createUser = (data, imageFile) => {
           isAdmin: newUser.isAdmin,
           email: newUser.email,
           avatar: newUser.avatar,
+          name: newUser.name,
+          phone: newUser.phone,
+          address: newUser.address,
         });
         const refresh_token = await JWTService.generateRefreshToken({
           id: newUser._id,
           isAdmin: newUser.isAdmin,
           email: newUser.email,
           avatar: newUser.avatar,
+          name: newUser.name,
+          phone: newUser.phone,
+          address: newUser.address,
         });
         if (newUser) {
           resolve({
@@ -70,6 +76,7 @@ const createUser = (data, imageFile) => {
                 address: newUser.address,
                 avatar: newUser.avatar,
                 phone: newUser.phone,
+                cart: newUser.cart,
                 createdAt: newUser.createdAt,
                 updatedAt: newUser.updatedAt,
               },
@@ -106,12 +113,18 @@ const loginUser = (data) => {
           isAdmin: user.isAdmin,
           email: user.email,
           avatar: user.avatar,
+          name: user.name,
+          phone: user.phone,
+          address: user.address,
         });
         const refresh_token = await JWTService.generateRefreshToken({
           id: user._id,
           isAdmin: user.isAdmin,
           email: user.email,
           avatar: user.avatar,
+          name: user.name,
+          phone: user.phone,
+          address: user.address,
         });
         resolve({
           status: "OK",
@@ -127,6 +140,7 @@ const loginUser = (data) => {
               address: user.address,
               avatar: user.avatar,
               phone: user.phone,
+              cart: user.cart,
               createdAt: user.createdAt,
               updatedAt: user.updatedAt,
             },
@@ -180,7 +194,7 @@ const getUserById = (userId) => {
 const updateUser = (userId, data, imageFile) => {
   return new Promise(async (resolve, reject) => {
     try {
-      const { name, password, address, phone } = data;
+      const { name, address, phone } = data;
       const checkUserByPhone = await User.findOne({ phone });
       if (checkUserByPhone && checkUserByPhone.phone !== phone) {
         resolve({
@@ -202,12 +216,10 @@ const updateUser = (userId, data, imageFile) => {
       }
       const avatar = imageFile?.path;
       const avatarPath = imageFile?.filename;
-      const hashPassword = password ? bcrypt.hashSync(password, 12) : undefined;
       const updatedUser = await User.findByIdAndUpdate(
         userId,
         {
           name,
-          password: hashPassword,
           address,
           phone,
           avatar,
@@ -215,10 +227,43 @@ const updateUser = (userId, data, imageFile) => {
         },
         { new: true }
       );
+      const access_token = await JWTService.generateAccessToken({
+        id: updatedUser._id,
+        isAdmin: updatedUser.isAdmin,
+        email: updatedUser.email,
+        avatar: updatedUser.avatar,
+        name: updatedUser.name,
+        phone: updatedUser.phone,
+        address: updatedUser.address,
+      });
+      const refresh_token = await JWTService.generateRefreshToken({
+        id: updatedUser._id,
+        isAdmin: updatedUser.isAdmin,
+        email: updatedUser.email,
+        avatar: updatedUser.avatar,
+        name: updatedUser.name,
+        phone: updatedUser.phone,
+        address: updatedUser.address,
+      });
       resolve({
         status: "OK",
         message: "Cập nhật tài khoản thành công!",
-        data: updatedUser,
+        data: {
+          access_token,
+          refresh_token,
+          user: {
+            _id: updatedUser._id,
+            isAdmin: updatedUser.isAdmin,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            address: updatedUser.address,
+            avatar: updatedUser.avatar,
+            phone: updatedUser.phone,
+            cart: updatedUser.cart,
+            createdAt: updatedUser.createdAt,
+            updatedAt: updatedUser.updatedAt,
+          },
+        },
       });
     } catch (error) {
       reject(error);
@@ -260,8 +305,10 @@ const addToCart = (userId, data) => {
           message: "Tài khoản không tồn tại!",
         });
       }
-      const product = user.cart?.find((item) => item.productId === productId);
-      if (product && product.size === size) {
+      const product = user.cart?.find(
+        (item) => item.productId === productId && item.size === size
+      );
+      if (product && product.size === size && product.productId === productId) {
         product.quantity = parseInt(product.quantity) + parseInt(quantity);
       } else {
         user.cart.push({ productId, name, img, size, quantity, price });
@@ -270,6 +317,7 @@ const addToCart = (userId, data) => {
       resolve({
         status: "OK",
         message: "Thêm sản phẩm vào giỏ hàng thành công!",
+        data: user.cart,
       });
     } catch (error) {
       reject(error);
@@ -296,6 +344,7 @@ const removeFromCart = (userId, productId, size) => {
         resolve({
           status: "OK",
           message: "Xóa sản phẩm khỏi giỏ hàng thành công!",
+          data: user.cart,
         });
       } else {
         resolve({
@@ -320,15 +369,24 @@ const payment = (userId, data) => {
         });
       }
       const {
+        name,
+        phone,
+        address,
         orderDate,
         deliveryDate,
         price,
         shippingFee,
         totalAmount,
         note,
-        paymentMethod,
       } = data;
-      if (!orderDate || !deliveryDate || !price || !shippingFee) {
+      if (
+        !name ||
+        !phone ||
+        !address ||
+        !orderDate ||
+        !deliveryDate ||
+        !price
+      ) {
         resolve({
           status: "ERR",
           message: "Dữ liệu đơn hàng không được để trống!",
@@ -336,6 +394,9 @@ const payment = (userId, data) => {
       }
       const newOrder = await Order.create({
         customerId: userId,
+        name,
+        phone,
+        address,
         orderDate,
         deliveryDate,
         products: user.cart,
@@ -343,7 +404,6 @@ const payment = (userId, data) => {
         shippingFee,
         totalAmount,
         note,
-        paymentMethod,
       });
       if (newOrder) {
         user.cart = [];
