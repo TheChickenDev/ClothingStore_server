@@ -603,6 +603,156 @@ const resetPassword = (data) => {
   });
 };
 
+const sendMessage = (data) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const { name, email, message } = data;
+      if (!name || !email || !message) {
+        resolve({
+          status: "ERR",
+          message: "Các trường không được để trống!",
+        });
+      }
+      const user = await User.findOne({ email });
+      if (!user) {
+        resolve({
+          status: "ERR",
+          message: "Email không tồn tại!",
+        });
+      }
+
+      // Receive message from user
+      let customerMailOptions = {
+        from: email,
+        to: process.env.MY_EMAIL,
+        subject: `Message from ${name} - ${email}`,
+        html: `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              background-color: #f7f7f7;
+            }
+        
+            .container {
+              width: 80%;
+              margin: 0 auto;
+              background-color: #f1f1f1;
+              padding: 20px;
+            }
+        
+            .message {
+              font-size: 1em;
+              color: #333;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h2>Message from ${name}</h2>
+            <p class="message">
+              ${message}
+            </p>
+          </div>
+        </body>
+        </html>
+        `,
+      };
+
+      // Send email to user
+      const from = `HeinShop <${process.env.MY_EMAIL}>`;
+      const subject = "Thanks for your message!";
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              margin: 0;
+              padding: 0;
+              background-color: #f7f7f7;
+            }
+
+            .container {
+              width: 80%;
+              margin: 0 auto;
+              background-color: #f1f1f1;
+              padding: 20px;
+            }
+
+            .message {
+              font-size: 1em;
+              color: #333;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <h4>Thank You for Your Message</h4>
+            <p class="message">
+              Dear ${name},
+              <br/>
+              <br/>
+              Thank you for reaching out to us. We appreciate your feedback and will get back to you as soon as possible.
+              <br/>
+              <br/>
+              Best Regards,
+              <br/>
+              HeinShop Team
+            </p>
+          </div>
+        </body>
+        </html>
+        `;
+
+      let mailOptions = {
+        from,
+        to: email,
+        subject,
+        html,
+      };
+
+      let transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.MY_EMAIL,
+          pass: process.env.MY_EMAIL_PASSWORD,
+        },
+      });
+
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          resolve({
+            status: "ERR",
+            message: error.message,
+          });
+        } else {
+          transporter.sendMail(customerMailOptions, function (error, info) {
+            if (error) {
+              resolve({
+                status: "ERR",
+                message: error.message,
+              });
+            } else {
+              resolve({
+                status: "OK",
+                message: "Gửi tin nhắn thành công!",
+              });
+            }
+          });
+        }
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   createUser,
   loginUser,
@@ -616,4 +766,5 @@ module.exports = {
   clearCart,
   forgotPassword,
   resetPassword,
+  sendMessage,
 };

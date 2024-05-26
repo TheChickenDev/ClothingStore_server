@@ -15,6 +15,7 @@ router.post(
 router.post("/login", UserController.loginUser);
 router.post("/forgot-password", UserController.forgotPassword);
 router.patch("/reset-password", UserController.resetPassword);
+router.post("/send-message", UserController.sendMessage);
 router.get("/get-all", authAdminMiddleware, UserController.getAllUser);
 router.get("/get-by-id/:id", authUserMiddleware, UserController.getUserById);
 router.patch(

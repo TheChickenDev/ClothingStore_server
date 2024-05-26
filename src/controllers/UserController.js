@@ -217,6 +217,17 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const sendMessage = async (req, res) => {
+  try {
+    const response = await UserService.sendMessage(req.body);
+    return res.status(200).json(response);
+  } catch (error) {
+    return res.status(404).json({
+      message: error,
+    });
+  }
+};
+
 module.exports = {
   createUser,
   loginUser,
@@ -231,4 +242,5 @@ module.exports = {
   clearCart,
   forgotPassword,
   resetPassword,
+  sendMessage,
 };
